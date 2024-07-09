@@ -16,10 +16,17 @@ const closeNav = () => {
 };
 ///////////////////////////////////////////////////////////////////////
 let buttons = document.querySelectorAll('.menus > button');
+let mode = 'default';
 buttons.forEach((item) =>
   item.addEventListener('click', function (event) {
     console.log(event.target.innerHTML);
-    filter(event);
+    console.log(event);
+    mode = event.target.innerHTML;
+    console.log('mode: ', mode);
+    //#1수정 시작
+    // filter(event);
+    getLatestNews(event);
+    //#1수정 끝
   })
 );
 let category = 'default';
@@ -29,17 +36,23 @@ let newsList = [];
 let newsListRefined = [];
 let categoryNewsList = [];
 //수정이 끝나는 부분#2
-const getLatestNews = async () => {
+const getLatestNews = async (event) => {
+  let url = new URL( //이 URL을 인스턴스라고 부른다. URL에 필요한 함수와 변수들을 제공함
+    `https://noona-times-v2.netlify.app/top-headlines`
+  );
+  if (mode != 'default') {
+    category = event.target.innerHTML.toLowerCase();
+    console.log('-----------------category 값: ', category);
+    url += `?category=${category}`;
+  } else {
+  }
   //#4[v]수정이 끝나는 부분#4 누나API로 변경중 -> 변경완료
   // const url = new URL( //이 URL을 인스턴스라고 부른다. URL에 필요한 함수와 변수들을 제공함
   //   `https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`
   //   );
 
-  const url = new URL( //이 URL을 인스턴스라고 부른다. URL에 필요한 함수와 변수들을 제공함
-    `http://times-node-env.eba-appvq3ef.ap-northeast-2.elasticbeanstalk.com/top-headlines`
-  );
   //#4[v]수정이 끝나는 부분#4 누나API로 변경중 -> 변경완료
-  console.log('uuu', url);
+  console.log('uuu1', url);
   const response = await fetch(url);
   const data = await response.json();
   newsList = data.articles;
@@ -118,33 +131,4 @@ const render = () => {
   document.getElementById('news-board').innerHTML = newsHTML;
 };
 getLatestNews();
-
-async function filter(event) {
-  if (event) {
-    category = event.target.innerHTML;
-    console.log('category 값: ', category);
-    await categoryNews(category);
-  }
-}
-
-const categoryNews = async (category) => {
-  //#4[v]수정이 끝나는 부분#4 누나API로 변경중 -> 변경완료
-  // const url = new URL( //이 URL을 인스턴스라고 부른다. URL에 필요한 함수와 변수들을 제공함
-  //   `https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`
-  //   );
-
-  const categoryUrl = new URL( //이 URL을 인스턴스라고 부른다. URL에 필요한 함수와 변수들을 제공함
-    `http://times-node-env.eba-appvq3ef.ap-northeast-2.elasticbeanstalk.com/top-headlines?category=${category}`
-  );
-  //#4[v]수정이 끝나는 부분#4 누나API로 변경중 -> 변경완료
-  console.log('category News의 category: ', category);
-  console.log('uuu category url: ', categoryUrl);
-  const categoryResponse = await fetch(categoryUrl);
-  const categoryData = await categoryResponse.json();
-  categoryNewsList = categoryData.articles;
-  console.log('ddddd category: ', categoryNewsList);
-  //수정 시작부분#1
-  newsListRefined = refiner(categoryNewsList);
-  render();
-};
 
