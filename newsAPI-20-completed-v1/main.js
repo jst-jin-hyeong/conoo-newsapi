@@ -198,8 +198,10 @@ const getNewsByKeyword = async () => {
   const keyword = document.getElementById('search-input').value;
   // console.log('키워드: ', keyword);
   page = 1;
+  url = new URL( //이 URL을 인스턴스라고 부른다. URL에 필요한 함수와 변수들을 제공함
+    `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`
+  );
   url.searchParams.set('q', keyword);
-
   getNews();
 };
 
